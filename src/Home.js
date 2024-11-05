@@ -1,6 +1,7 @@
 import React from 'react'
 import {MorphingBubble} from './MorphingBubble'
 import { motion,useAnimation } from "framer-motion";
+import supabase from './supabaseClient';
 export function Home() {
   const controls = useAnimation();
   const scrollDown = async () => {

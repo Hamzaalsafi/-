@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMotionValue, animate } from 'framer-motion';
+
 export function Nav() {
 
   const scrollDown = () => {

@@ -1,6 +1,7 @@
 import {useState,useEffect} from 'react'
 import {Nav} from './Nav'
 import { motion } from 'framer-motion';
+import supabase from './supabaseClient';
 const IE = [
     { courseCode: 'IE 205', courseDescription: 'المشاغل الهندسية' },
     { courseCode: 'IE 211', courseDescription: 'القياسات' },
