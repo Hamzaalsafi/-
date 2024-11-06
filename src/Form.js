@@ -382,7 +382,7 @@ export function Form() {
         <div className='text-center w-full'>
           <motion.select
             required
-            className="text-center custom-select cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="text-center custom-select  justify-center cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             aria-label="Default select example"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
@@ -398,7 +398,7 @@ export function Form() {
         <div className='text-center w-full'>
           <motion.select
             required
-            className="text-center bg-gray-50 cursor-pointer border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="text-center  justify-center bg-gray-50 cursor-pointer border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             aria-label="Default select example text-sm"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
@@ -415,7 +415,7 @@ export function Form() {
         <motion.input
           required
           type='text'
-          className='text-center bg-gray-50 border border-gray-300 text-gray-900 py-4 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+          className='text-center bg-gray-50 border  border-gray-300 text-gray-900 py-4 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           placeholder='الرابط'
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
@@ -424,7 +424,7 @@ export function Form() {
         <div className='flex justify-center items-center mt-2'>
           <motion.button
             type="submit"
-            className='sm:px-6 px-2 w-[70%] hover:scale-105 bg-indigo-600 text-white shadow-lg rounded-lg sm:py-1.5 py-1 hover:bg-indigo-700 text-center'
+            className='sm:px-6 px-2 w-[70%] flex justify-center hover:scale-105 bg-indigo-600 text-white shadow-lg rounded-lg sm:py-1.5 py-1 hover:bg-indigo-700 text-center'
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
             transition={{ duration: 0.7 }}

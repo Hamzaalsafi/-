@@ -9,8 +9,7 @@ export const AboutUs = () => {
 <div className="meteor-1"></div>
 <div className="meteor-2"></div>
 <div className="meteor-3"></div>
-<div className="meteor-4"></div>
-<div className="meteor-5"></div>
+
 
 <h1 className='sm:w-1/2 text-gray-200 text-2xl text-center'>يهدف هذا الموقع إلى بناء منصة شاملة تحتوي على جميع المصادر التي يحتاجها  الطالب الجامعي. يعتمد نجاح هذا المشروع على جهودكم، حيث أن جمع المصادر لمختلف التخصصات يتطلب تعاون كبير.
 
