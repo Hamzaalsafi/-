@@ -53,8 +53,8 @@ export const MorphingBubble = () => {
           ease: "easeInOut",
         }}
         style={{
-          width: window.innerWidth > 375 ? window.innerWidth * 0.5 + "px" : "150px",
-          height: window.innerWidth > 375 ? window.innerWidth * 0.5 + "px" : "150px",
+          width: window.innerWidth > 375 ? window.innerWidth/window.innerHeight * 320+ "px" : "150px",
+          height: window.innerWidth > 375 ?  window.innerWidth/window.innerHeight * 320+ "px" : "150px",
           maxHeight: 500,
           minHeight:130,
           minWidth:130,

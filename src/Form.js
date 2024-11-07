@@ -2,6 +2,9 @@ import {useState,useEffect} from 'react'
 import {Nav} from './Nav'
 import { motion } from 'framer-motion';
 import supabase from './supabaseClient';
+import { useStudent } from './StudentContext'; 
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css'; 
 const IE = [
     { courseCode: 'IE 205', courseDescription: 'المشاغل الهندسية' },
     { courseCode: 'IE 211', courseDescription: 'القياسات' },
@@ -264,20 +267,122 @@ const ME = [
     { courseCode: "MATH 241", courseDescription: "جبـر خطـي (1)" },
     { courseCode: "MATH 152", courseDescription: "الرياضيات المتقطعة" },
   ]
-export function Form() {
+export function Form({ scrollToHome, scrollToDonation, scrollToForm, scrollToAboutUs }) {
     const [selectedCourse, setSelectedCourse] = useState([]);
-    const [isInView, setIsInView] = useState(false); // State to track if the component is in view
-
+    const [isInView, setIsInView] = useState(false); 
+    const {student }=useStudent();
+    const [name,setName]=useState("");
+    const [studentID, setStuedntID]=useState("");
+    const [specialization, setSpecialization]=useState("");
+    const [course,setCourse]=useState("");
+    const [type, setType]=useState("");
+    const [link,setLink]=useState("");
+    useEffect(() => {
+      const storedName = localStorage.getItem('name');
+      const storedStudentID = localStorage.getItem('studentID');
+      if (storedName) {
+        setName(storedName);
+      }
+      if (storedStudentID) {
+        setStuedntID(storedStudentID);
+      }
+    }, []);
     const handleScroll = () => {
-        const triggerPoint = window.innerHeight*2 / 1.5; 
+        const triggerPoint =student==="student"?window.innerHeight*2 / 1.6:window.innerHeight/1.6; 
         if (window.scrollY > triggerPoint) {
             setIsInView(true);
         } else {
             setIsInView(false);
         }
     };
+    const handleSubmit = async (e) => {
+      e.preventDefault("");
+      setCourse("");
+      setType("");
+      setLink("");
+      setSpecialization("")
+      const notyf = new Notyf();
+      notyf.success({
+        message: 'تمت العملية بنجاح, بارك الله فيك',
+        position: { x: 'center', y: 'top' } // Correct usage for position
+      });
+      localStorage.setItem('name', name);
+      localStorage.setItem('studentID', studentID);
+    
+      const id = `${new Date().getTime()}-${course}`;  
+    
+    
+      try {
+    
+        const { data: studentData, error: studentError } = await supabase
+          .from('student') //
+          .select('student_id, submission_count')
+          .eq('student_id', studentID)  
+          .single();  
+    
+        if (studentError) {
+         
+          if (studentError.code === 'PGRST116') { 
+            
+            
 
-    // Add scroll event listener
+            const { data: insertData, error: insertError } = await supabase
+              .from('student')
+              .insert([
+                {
+                  student_id: studentID,
+                  full_name: name,
+                  submission_count: 1, 
+                }
+              ]);
+    
+            if (insertError) {
+              throw insertError;
+            } else {
+              console.log('New student inserted:', insertData);
+            }
+          }
+        } else {
+          // Step 2: If student exists, update the submission count
+          console.log('Student found, updating submission count');
+          const updatedSubmissionCount = studentData.submission_count + 1;  // Increment submission count
+    
+          const { data: updateData, error: updateError } = await supabase
+            .from('student')
+            .update({ submission_count: updatedSubmissionCount })
+            .eq('student_id', studentID);  
+    
+          if (updateError) {
+            throw updateError;
+          } else {
+            console.log('Submission count updated:', updateData);
+          }
+        }
+    
+     
+        const { data, error } = await supabase
+          .from('submission') 
+          .insert([
+            {
+              ID: id,  
+              specialization: specialization,
+              course: course,
+              type: type,
+              link: link
+            }
+          ]);
+    
+        if (error) {
+          throw error;
+        } else {
+          console.log('Submission data inserted:', data);
+        }
+      } catch (err) {
+        console.error('Error:', err.message);
+      }
+    };
+    
+ 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => {
@@ -285,7 +390,7 @@ export function Form() {
         };
     }, []);
     const handleSpecializationChange =(Specialize)=>{
-
+      setSpecialization(Specialize.target.value);
     switch (Specialize.target.value) {
         case 'CPE':
             setSelectedCourse(CPE);
@@ -327,42 +432,53 @@ export function Form() {
   
   return (
     <div>
-    <Nav />
+     <Nav 
+            scrollToHome={scrollToHome} 
+            scrollToDonation={scrollToDonation} 
+            scrollToForm={scrollToForm} 
+            scrollToAboutUs={scrollToAboutUs} 
+          />
     <div className='w-screen text-lg relative h-screen overflow-x-hidden justify-center items-center flex flex-col bg-slate-50'>
-      <div className='absolute bg-slate-600 right-0 rounded-br-full lg:rounded-br-none rounded-bl-full lg:w-[45%] w-full h-[54px] lg:h-[60px] top-0'></div>
+      <div className='absolute bg-slate-600 right-0 rounded-br-full lg:rounded-br-none rounded-bl-full lg:w-[65%] w-full h-[54px] lg:h-[60px] top-0'></div>
       <motion.form
+      onSubmit={handleSubmit}
         type="submit"
         className='gap-3 flex flex-col w-[70%] max-w-[300px]'
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.6 }}
       >
-        <motion.input
+       {student==="student"&&( <motion.input
           required
+          onChange={(e)=>{setName(e.target.value)}}
           type='text'
+          value={name}
           className='text-center bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           placeholder='الاسم الثلاثي'
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-          transition={{ duration: 0.7 }}
-        />
-        <motion.input
+          transition={{ duration: 0.5 }}
+        />)}
+        {student==="student"&&(<motion.input
           required
+          value={studentID}
+          onChange={(e)=>{setStuedntID(e.target.value)}}
           type='text'
           className='text-center bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           placeholder='الرقم الجامعي'
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-          transition={{ duration: 0.7 }}
-        />
+          transition={{ duration: 0.5 }}
+        />)}
         <div className='text-center w-full'>
           <motion.select
             required
+            value={specialization}
             className="text-center cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             aria-label="Default select example text-sm"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.5 }}
             onChange={handleSpecializationChange}
           >
             <option className='text-sm cursor-pointer' value=""  defaultValue>التخصص</option>
@@ -386,8 +502,9 @@ export function Form() {
             aria-label="Default select example"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-            transition={{ duration: 0.7 }}
-      
+            transition={{ duration: 0.5 }}
+            value={course}
+            onChange={(e)=>{setCourse(e.target.value)}}
           >
             <option className='text-sm' value=""  defaultValue>المادة</option>
             {selectedCourse.map((course, index) => (
@@ -398,11 +515,13 @@ export function Form() {
         <div className='text-center w-full'>
           <motion.select
             required
+            value={type}
+            onChange={(e)=>{setType(e.target.value)}}
             className="text-center  justify-center bg-gray-50 cursor-pointer border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             aria-label="Default select example text-sm"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.5 }}
           >
             <option className='text-sm cursor-pointer' value=""  defaultValue> نوع المحتوى</option>
             <option className='text-sm cursor-pointer' >كتاب</option>
@@ -416,10 +535,11 @@ export function Form() {
           required
           type='text'
           className='text-center bg-gray-50 border  border-gray-300 text-gray-900 py-4 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-300 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-          placeholder='الرابط'
+          placeholder='(رابط واحد في كل مرة) الرابط'
+          onChange={(e)=>{setLink(e.target.value)}}
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.5 }}
         />
         <div className='flex justify-center items-center mt-2'>
           <motion.button
@@ -427,7 +547,7 @@ export function Form() {
             className='sm:px-6 px-2 w-[70%] flex justify-center hover:scale-105 bg-indigo-600 text-white shadow-lg rounded-lg sm:py-1.5 py-1 hover:bg-indigo-700 text-center'
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.5 }}
           >
             تسليم
           </motion.button>

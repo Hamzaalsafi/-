@@ -9,6 +9,7 @@
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
     
 }
+
 .body {
  
    
@@ -23,39 +24,39 @@
     height: 1px;
     transform: rotate(-45deg);
     background-image: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
-    animation: meteor 5s linear infinite;
+    animation: meteor 10s linear infinite;
   }
   
   .meteor-1 {
-    top:10%;
-    left: 20%;
-    animation-duration: 4.5s;
+    top:15%;
+    left: 25%;
+    animation-duration: 16.5s;
   }
   
   .meteor-2 {
-    top:20%;
-    left: 40%;
-    animation-duration: 6.3s;
+    top:45%;
+    left: 50%;
+    animation-duration: 18.3s;
   }
   
   .meteor-3 {
-    top:30%;
+    top:75%;
     left: 70%;
-    animation-duration: 5.8s;
+    animation-duration: 20.8s;
   }
 
   @keyframes meteor {
     0% {
       opacity: 1;
-      margin-top: -300px;
-      margin-right: -300px;
+      margin-top: -20%;
+      margin-right: -20%;
     }
     12% {
       opacity: 0;
     }
     15% {
-      margin-top: 300px;
-      margin-left: -600px;
+      margin-top: 20%;
+      margin-left: -50%;
       opacity: 0;
     }
     100% {

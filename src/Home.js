@@ -1,27 +1,83 @@
-import React from 'react'
+import React, { useEffect,useState } from 'react'
 import {MorphingBubble} from './MorphingBubble'
-import { motion,useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import supabase from './supabaseClient';
-export function Home() {
-  const controls = useAnimation();
-  const scrollDown = async () => {
-    const targetScrollY = window.scrollY + window.innerHeight * 2;
+export function Home({scrollToForm}) {
+const [subtimes,setSubTimes]=useState(0);
+const [totalSubmissionCount, setTotalSubmissionCount] = useState(0);
+const [uniqueCourseCount, setUniqueCourseCount] = useState(0);
+useEffect(() => {
+  const countStudents = async () => {
+    try {
+     
+      const { count, error } = await supabase
+        .from('student') 
+        .select('student_id', { count: 'exact' }); 
 
-    // Start the animation
-    controls.start({
-      scrollY: targetScrollY,
-      transition: { duration: 1, ease: "easeInOut" }
-    });
+      if (error) {
+        throw error;
+      } else {
+        setSubTimes(count);  
+      }
+    } catch (err) {
+      console.error('Error counting students:', err.message);
+    }
+  };countStudents(); 
+}, []); 
+useEffect(() => {
+  const countTotalSubmissions = async () => {
+    try {
 
-    // Smoothly update the scroll position
-    const animation = { scrollY: window.scrollY };
-    await controls.start((animation) => ({
-      scrollY: targetScrollY,
-      transition: { duration: 1, ease: "easeInOut" }
-    }));
-    
-    window.scrollTo({ top: targetScrollY, behavior: "smooth" });
+
+      const { data, error } = await supabase
+        .from('student')  
+        .select('submission_count');
+
+      if (error) {
+        throw error;
+      } else {
+   
+        const total = data.reduce((acc, row) => acc + (row.submission_count || 0), 0);
+        setTotalSubmissionCount(total);  
+      }
+    } catch (err) {
+      console.error('Error counting total submissions:', err.message);
+    } finally {
+     
+    }
   };
+
+  countTotalSubmissions();
+}, []);
+useEffect(() => {
+  const countUniqueCourses = async () => {
+    try {
+   
+
+   
+      const { data, error } = await supabase
+        .from('submission')
+        .select('course')
+        .neq('course', null);  
+
+      if (error) {
+        throw error;
+      } else {
+        const uniqueCourses = [...new Set(data.map(item => item.course))];
+        setUniqueCourseCount(uniqueCourses.length);  
+      }
+    } catch (err) {
+      console.error('Error counting unique courses:', err.message);
+    } finally {
+   
+    }
+  };
+
+  countUniqueCourses();
+}, []);
+
+  
+  
   return (
     <div className='w-screen h-screen flex items-center  flex-col-reverse lg:flex-row lg:justify-between  bg-slate-50 '>
     
@@ -55,7 +111,7 @@ export function Home() {
                    <img className='lg:w-[60px] w-[45px]' src="/png_grkc6.png" />   
                    </div>
             
-                   <p className='lg:mt-1 justify-start text-lg lg:text-xl  text-center select-none pointer-events-none font-bold'>190</p>
+                   <p className='lg:mt-1 justify-start text-lg lg:text-xl  text-center select-none pointer-events-none font-bold'>{subtimes}</p>
                    <p className='select-none text-center  pointer-events-none text-lg lg:text-xl'>مشاركون العطاء</p>
              
                 </motion.div>
@@ -81,7 +137,7 @@ export function Home() {
                    <img className='lg:w-[60px] w-[45px]' src="/png_m8pbv.png" />   
                    </div>
             
-                   <p className='lg:mt-1 text-center  select-none pointer-events-none text-lg lg:text-xl font-bold'>190</p>
+                   <p className='lg:mt-1 text-center  select-none pointer-events-none text-lg lg:text-xl font-bold'>{totalSubmissionCount}</p>
                    <p className='text-lg lg:text-xl text-center   select-none pointer-events-none'> مرات العطاء</p>
              
                 </motion.div>
@@ -106,14 +162,14 @@ export function Home() {
                    <img className='lg:w-[60px] w-[45px] ' src="/png_4qdzl.png" />   
                    </div>
             
-                   <p className='lg:mt-1 text-center  select-none pointer-events-none text-lg lg:text-xl font-bold'>190</p>
+                   <p className='lg:mt-1 text-center  select-none pointer-events-none text-lg lg:text-xl font-bold'>{uniqueCourseCount}</p>
                    <p className=' text-lg lg:text-xl text-center  select-none pointer-events-none'>المواد المغطاة</p>
              
                 </motion.div>
                
             </div>
             <div className='flex justify-center mt-1 lg:mt-8'>
-                <button onClick={scrollDown}  className='font-bold hover:scale-105 lg:px-7 text-xl sm:text-2xl select-none  bg-indigo-600 shadow-lg cursor-pointer  text-white  rounded-lg p-3 py-1 lg:py-2 hover:bg-indigo-700'>شاركنا العطاء</button>
+                <button onClick={scrollToForm}  className='font-bold hover:scale-105 lg:px-7 text-xl sm:text-2xl select-none  bg-indigo-600 shadow-lg cursor-pointer  text-white  rounded-lg p-3 py-1 lg:py-2 hover:bg-indigo-700'>شاركنا العطاء</button>
                 </div>
         </div>
      
